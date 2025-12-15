@@ -7,13 +7,9 @@ import { router } from './routes/index.js';
 
 const app = express();
 
+app.use('/css', express.static('src/css'));
 app.use(cors({ origin: '*', allowedHeaders: ['Content-Type','Authorization'] }));
 app.use(express.json());
-
-// opcional: servir sua UI. Se mover seu index.html para "public/":
-// app.use(express.static('public'));
-// Se quiser servir a raiz atual (onde está o index.html):
-// app.use(express.static('.'));
 
 // healthcheck
 app.get('/health', (req, res) => res.json({ ok: true }));

@@ -1,13 +1,18 @@
-module.exports = (req, res, next) => {
-  const authHeader = req.headers.authorization;
+export function auth(req, res, next) {
+  const header = req.headers.authorization || '';
+  const [scheme, token] = header.split(' ');
 
-  if (!authHeader) {
+  if (scheme !== 'Bearer' || !token) {
     return res.status(401).json({ error: 'Token não informado' });
   }
 
-  if (authHeader !== `Bearer ${process.env.API_TOKEN}`) {
+  if (!process.env.API_TOKEN) {
+    return res.status(500).json({ error: 'API_TOKEN não configurado no servidor' });
+  }
+
+  if (token !== process.env.API_TOKEN) {
     return res.status(401).json({ error: 'Token inválido' });
   }
 
   next();
-};
+}

@@ -24,7 +24,7 @@
 	font-weight:500;
 }
 
-.box a {
+.box button {
     text-decoration: none;
 }
 
@@ -67,7 +67,7 @@
 	text-align:center;
 	border:2px solid #3498db;
 	padding:14px 10px;
-	width:200px;
+	width:180px;
 	outline:none;
 	color:white;
 	border-radius:24px;
@@ -79,14 +79,30 @@
 	border-color: #3366ff;	
 }
 
-.box input[type = "submit"], .box a{
+.box input[type = "submit"], .add button{
 	border:0;
 	background:none;
 	display:block;
-	margin:20px auto;
+	width: 200px;
+	margin:20px auto;	
 	text-align:center;
 	border:2px solid #3498db;
-	padding:14px 40px;
+	padding:14px 14px;
+	outline:none;
+	color:white;
+	border-radius:24px;
+	transition:0.25s;
+	cursor:pointer	
+}
+
+.box input[type = "submit"], .search-container button{
+	border:0;
+	background:none;
+	display:block;
+	margin:20px auto;	
+	text-align:center;
+	border:2px solid #3498db;
+	padding:14px 14px;
 	outline:none;
 	color:white;
 	border-radius:24px;
@@ -95,7 +111,7 @@
 }
 
 .box input[type = "submit"]:hover{background:#3366ff;}
-.box a:hover{background:#3366ff;}
+.box button:hover{background:#3366ff;}
 
 .txt{
 	left:36%;
@@ -105,7 +121,7 @@
 	font-family:sans-serif;
 }
 
-.button{ 
+.btnADD{ 
 	font-size: 14px;
 	font-family:sans-serif;
 	display: inline-block;
@@ -116,44 +132,8 @@
 	border-radius:24px;
 }
 
-.list-container[type = "button"], .list-container button{
-	border:0;
-	background:none;
-	display:block;
-	margin:20px auto;
-	text-align:center;
-	border:2px solid #3498db;
-	padding:14px 14px;
-	outline:none;
-	color:white;
-	border-radius:24px;
-	transition:0.25s;
-	cursor:pointer	
-}
-
 .list-container input[type = "button"]:hover{background:#3366ff;}
 .list-container button:hover{background:#3366ff;}
-
-.buttonCRUD{
-	border:0;
-	background:none;
-	display:block;
-	margin:10px auto;
-	text-align:center;
-	border:2px solid #3498db;
-	padding:14px 14px;
-	outline:none;
-	color:white;
-	border-radius:24px;
-	transition:0.25s;
-	cursor:pointer	
-}
-
-.buttonCRUD {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
 
 .search-container {
     display: flex;
