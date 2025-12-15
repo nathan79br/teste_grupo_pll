@@ -1,0 +1,100 @@
+ <!doctype html5>
+<html lang="pt-br">
+<meta charset="utf-8">
+
+	<link rel="stylesheet" href="src/css/style.css"></link>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<head>
+	<title>Teste Pll</title>	
+</head>
+
+<body>
+
+<form action="" method="post" class="box"> <!-- inicio formulário -->
+    <h1>Gerenciador de Estados e Cidades</h1>
+
+    <!-- Campos de cadastro -->
+    <select name="estado" class="select-uf" required>
+        <option value="" disabled selected>Selecione o Estado (UF)</option>
+        <option value="AC">AC - Acre</option>
+        <option value="AL">AL - Alagoas</option>
+        <option value="AP">AP - Amapá</option>
+        <option value="AM">AM - Amazonas</option>
+        <option value="BA">BA - Bahia</option>
+        <option value="CE">CE - Ceará</option>
+        <option value="DF">DF - Distrito Federal</option>
+        <option value="ES">ES - Espírito Santo</option>
+        <option value="GO">GO - Goiás</option>
+        <option value="MA">MA - Maranhão</option>
+        <option value="MT">MT - Mato Grosso</option>
+        <option value="MS">MS - Mato Grosso do Sul</option>
+        <option value="MG">MG - Minas Gerais</option>
+        <option value="PA">PA - Pará</option>
+        <option value="PB">PB - Paraíba</option>
+        <option value="PR">PR - Paraná</option>
+        <option value="PE">PE - Pernambuco</option>
+        <option value="PI">PI - Piauí</option>
+        <option value="RJ">RJ - Rio de Janeiro</option>
+        <option value="RN">RN - Rio Grande do Norte</option>
+        <option value="RS">RS - Rio Grande do Sul</option>
+        <option value="RO">RO - Rondônia</option>
+        <option value="RR">RR - Roraima</option>
+        <option value="SC">SC - Santa Catarina</option>
+        <option value="SP">SP - São Paulo</option>
+        <option value="SE">SE - Sergipe</option>
+        <option value="TO">TO - Tocantins</option>
+    </select>
+
+    <input type="text" name="cidade" placeholder="Cidade">
+
+    <!-- Botão adicionar -->
+    <a class="button" role="button" href="">Adicionar</a>
+
+    <!-- Barra de pesquisa -->
+    <div class="search-container">
+        <input type="text" name="pesquisa" placeholder="Pesquisar estado ou cidade">
+        <button class="buttonCRUD" role="button" href="">
+            <i class="fa-solid fa-magnifying-glass"></i> 
+        </button>
+    </div>
+
+<!-- Lista de estados e cidades -->
+<!-- Cabeçalho da lista -->
+<div class="list-header">
+    <span>Estado</span>
+    <span>Cidade</span>
+    <span>Ações</span>
+    <span></span>
+</div>
+
+<!-- Lista -->
+<div class="list-container">
+    <ul>
+        <li>
+            <span class="estado">São Paulo</span>
+            <span class="cidade">Campinas</span>
+            <button class="buttonCRUD" type="button">
+                <i class="fa-solid fa-pen"></i>
+            </button>
+            <button class="buttonCRUD" type="button">
+                <i class="fa-solid fa-trash"></i>
+            </button>
+        </li>
+
+        <li>
+            <span class="estado">Rio de Janeiro</span>
+            <span class="cidade">Niterói</span>
+            <button class="buttonCRUD" type="button">
+                <i class="fa-solid fa-pen"></i>
+            </button>
+            <button class="buttonCRUD" type="button">
+                <i class="fa-solid fa-trash"></i>
+            </button>
+        </li>
+    </ul>
+</div>
+
+</form>   <!-- final formulário -->
+
+</body>
