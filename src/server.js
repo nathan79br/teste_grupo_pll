@@ -6,6 +6,7 @@ import { auth } from './middlewares/auth.js';
 import { router } from './routes/index.js';
 
 const app = express();
+const PORT = process.env.PORT || 3000;
 
 app.use('/css', express.static('src/css'));
 app.use(cors({ origin: '*', allowedHeaders: ['Content-Type','Authorization'] }));

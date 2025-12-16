@@ -14,3 +14,5 @@ router.get('/cidades/:id', obterCidade);
 router.post('/cidades', criarCidade);
 router.put('/cidades/:id', atualizarCidade);
 router.delete('/cidades/:id', removerCidade);
+
+export default router;
