@@ -1,8 +1,9 @@
 // public/js/app.js
-const API_BASE = window.location.origin; // ex.: http://localhost:3000
-const TOKEN_KEY = 'fcb9fb891ed951267eb81954e9c516123fcbc6fd22f10584bf9bf60888498979';
+const API_BASE = '/api'; // ex.: http://localhost:3000
+const TOKEN_KEY = 'api_token_dev';
 
 // --------------- Token (dev) ---------------
+//função para pegar o token
 function getToken() {
   return localStorage.getItem(TOKEN_KEY) || '';
 }
