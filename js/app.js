@@ -1,15 +1,67 @@
-// public/js/app.js
-const API_BASE = '/api'; // ex.: http://localhost:3000
+/*
+* Módulo para comunicação da UI e CRUD de Cidades/Estados.
+* Responsabilidades:
+* - Guardar/ler o token de autenticação (Bearer) no localStorage.
+* - Fazer requisições HTTP à API, incluindo o token e tratando 401 com retry.
+* - Fornecer um pequeno cliente `api` (get/post/put/del).
+* - Popular a UI, renderizar lista e tratar ações (adicionar/editar/remover/pesquisar).
+*
+* Dependências globais (browser):
+* - fetch / Headers
+* - localStorage
+* - prompt, alert, confirm
+*/
+
+/*
+ * URL base das rotas da API no servidor Express (prefixo configurado no backend).
+ * Ex.: o endpoint GET /api/estados será chamado como `${API_BASE}/estados`
+ */
+const API_BASE = '/api';
+//Chave usada no localStorage para manter o token da API no ambiente de dev.
 const TOKEN_KEY = 'api_token_dev';
 
-// --------------- Token (dev) ---------------
-//função para pegar o token
+/**
+ * Tipo Estado.
+ * @typedef {Object} Estado
+ * @property {number} id
+ * @property {string} nome
+ * @property {string} uf
+ */
+
+/**
+ * Tipo Cidade.
+ * @typedef {Object} Cidade
+ * @property {number} id
+ * @property {string} nome
+ * @property {string} estado_uf
+ */
+
+//Token (dev) 
+
+/**
+ * Obtém o token atual armazenado no navegador.
+ * @returns {string} token ou string vazia se inexistente.
+ */
+
 function getToken() {
   return localStorage.getItem(TOKEN_KEY) || '';
 }
+/**
+ * Persiste um token no localStorage.
+ * @param {string} t Token Bearer (sem o prefixo "Bearer ").
+ */
+
 function setToken(t) {
   localStorage.setItem(TOKEN_KEY, t);
 }
+
+/**
+ * Garante que há um token válido. Se não houver, solicita via prompt.
+ * Também pode ser chamado após uma resposta 401 para redefinir o token.
+ * @param {Response} [e] Response opcional (ex.: quando status === 401).
+ * @returns {Promise<string>} Token em formato limpo (trim).
+ * @throws {Error} Se o usuário não informar o token.
+ */
 async function ensureToken(e) {
   let t = getToken();
   if (!t || (e && e.status === 401)) {
@@ -20,21 +72,42 @@ async function ensureToken(e) {
   return t.trim();
 }
 
-// --------------- HTTP helpers ---------------
+//HTTP helpers
+/**
+ * Faz uma requisição HTTP para a API aplicando automaticamente:
+ * - Authorization: Bearer <token>
+ * - Content-Type: application/json (quando houver body e o header não tiver sido informado)
+ *
+ * Regras de tratamento:
+ * - 204 No Content → retorna null
+ * - Resposta JSON (content-type inclui "application/json") → faz res.json(), com fallback seguro
+ * - Resposta texto → faz res.text()
+ * - 401 Unauthorized → chama ensureToken() e refaz a requisição apenas 1 vez
+ * - Demais erros (>=400) → lança Error com message/error do backend ou "HTTP <status>"
+ *
+ * Observação: quando enviar JSON, serialize o corpo antes (JSON.stringify).
+ *
+ * @param {string} path Caminho da API_BASE (ex.: "/cidades", "/estados/SP").
+ * @param {RequestInit & { __retried?: boolean }} [opts={}] Opções do fetch (method, headers, body, etc.).
+ * @returns {Promise<any|null|string>} JSON, string (texto) ou null (quando 204).
+ * @throws {Error} Em status não-ok após possível retry em 401.
+ */
 async function request(path, opts = {}) {
   const token = getToken();
   const headers = new Headers(opts.headers || {});
   headers.set('Authorization', `Bearer ${token}`);
+  // Define JSON por padrão quando há corpo e o chamador não definiu o Content-Type
   if (opts.body && !headers.has('Content-Type')) {
     headers.set('Content-Type', 'application/json');
   }
 
   const res = await fetch(`${API_BASE}${path}`, { ...opts, headers });
+  // 204 No Content → sem corpo
   if (res.status === 204) return null;
-
+  // Decide o parse com base no content-type
   const isJson = (res.headers.get('content-type') || '').includes('application/json');
   const data = isJson ? await res.json().catch(() => null) : await res.text().catch(() => '');
-
+  // Tratamento de erros
   if (!res.ok) {
     // Se 401, pedir/redefinir token e tentar 1x
     if (res.status === 401 && !opts.__retried) {
@@ -47,14 +120,23 @@ async function request(path, opts = {}) {
   return data;
 }
 
+/**
+ * Cliente simplificado para a API com métodos REST.
+ * - post/put: serializam automaticamente o corpo para JSON.
+ */
 const api = {
+  /** @param {string} p */
   get: (p) => request(p),
+  /** @param {string} p @param {any} b */
   post: (p, b) => request(p, { method: 'POST', body: JSON.stringify(b) }),
+  /** @param {string} p @param {any} b */
   put: (p, b) => request(p, { method: 'PUT', body: JSON.stringify(b) }),
+  /** @param {string} p */
   del: (p) => request(p, { method: 'DELETE' })
 };
 
-// --------------- Referencias ao HTML ---------------
+
+//Referencias ao HTML
 //referente a lista de seleção de UF
 const ufSel = document.getElementById('uf');
 //referente ao campo de inserção de cidade
@@ -67,15 +149,22 @@ const btnPesquisar = document.getElementById('btnPesquisar');
 //referente a lista de estados e cidades
 const lista = document.getElementById('lista');
 
-// --------------- Estado local ---------------
+//Estado local
+/** @type {Estado[]} */
 let ESTADOS = [];
+/** @type {Cidade[]} */
 let CIDADES = [];
 
-// --------------- Render ---------------
-//função que cria elementos na lista 
+//Render
+/**
+ * Renderiza a lista de cidades no <ul id="lista">.
+ * Cria elementos: UF, nome, botões Editar/Excluir e associa os handlers.
+ * @param {Cidade[]} cidades
+ */
 function renderLista(cidades) {
   lista.innerHTML = '';
   for (const c of cidades) {
+
     const li = document.createElement('li');
     li.dataset.id = c.id;
 
@@ -104,6 +193,10 @@ function renderLista(cidades) {
   }
 }
 
+/*
+ * Aplica filtro de pesquisa por nome de cidade ou UF (case-insensitive)
+ * e re-renderiza a lista.
+ */
 function aplicarFiltro() {
   const q = (pesquisaInp.value || '').trim().toLowerCase();
   const filtradas = q
@@ -115,10 +208,14 @@ function aplicarFiltro() {
   renderLista(filtradas);
 }
 
-// --------------- Ações ---------------
+//Ações
+/**
+ * Carrega estados da API e preenche o <select id="uf">.
+ * @returns {Promise<void>}
+ */
 async function carregarEstados() {
   ESTADOS = await api.get('/estados');
-  // Preenche o select
+  //preenche a seleção com as opções disponiveis no banco de dados
   ufSel.innerHTML = '<option value="" disabled selected>Selecione o Estado (UF)</option>';
   for (const e of ESTADOS) {
     const opt = document.createElement('option');
@@ -128,11 +225,20 @@ async function carregarEstados() {
   }
 }
 
+/**
+ * Carrega cidades da API (limit=1000), aplica o filtro e renderiza.
+ * @returns {Promise<void>}
+ */
 async function carregarCidades() {
   CIDADES = await api.get('/cidades?limit=1000');
   aplicarFiltro();
 }
 
+/**
+ * Adiciona uma nova cidade (nome + UF) via API e atualiza a lista.
+ * Valida campos e exibe feedbacks via alert.
+ * @returns {Promise<void>}
+ */
 async function adicionarCidade() {
   const nome = (cidadeInp.value || '').trim();
   const estado_uf = (ufSel.value || '').trim().toUpperCase();
@@ -150,6 +256,11 @@ async function adicionarCidade() {
   }
 }
 
+/**
+ * Edita uma cidade existente solicitando novos valores via prompt.
+ * @param {Cidade} c Cidade atual a ser editada.
+ * @returns {Promise<void>}
+ */
 async function editarCidade(c) {
   const novoNome = prompt('Novo nome da cidade:', c.nome);
   if (novoNome === null) return;
@@ -169,6 +280,11 @@ async function editarCidade(c) {
   }
 }
 
+/**
+ * Remove uma cidade após confirmação do usuário.
+ * @param {number} id ID da cidade.
+ * @returns {Promise<void>}
+ */
 async function removerCidade(id) {
   if (!confirm('Confirma remover a cidade?')) return;
   try {
@@ -180,12 +296,19 @@ async function removerCidade(id) {
   }
 }
 
-// --------------- Eventos ---------------
+//Eventos
+//Botões e inputs: adicionar e pesquisar (live-search no input)
 btnADD.addEventListener('click', adicionarCidade);
 btnPesquisar.addEventListener('click', aplicarFiltro);
 pesquisaInp.addEventListener('input', aplicarFiltro);
 
-// --------------- Boot ---------------
+//Boot
+/*
+ * Inicialização da página:
+ * - Garante token (pede via prompt se necessário)
+ * - Carrega estados e cidades
+ * - Em caso de falha, mostra alerta de diagnóstico
+ */
 (async function init() {
   try {
     if (!getToken()) await ensureToken();
