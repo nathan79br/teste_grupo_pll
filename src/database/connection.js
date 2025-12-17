@@ -1,4 +1,4 @@
-// src/database/connection.js
+
 import 'dotenv/config';
 import { createPool } from 'mysql2/promise';
 
