@@ -1,4 +1,3 @@
-// src/server.js
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
@@ -12,12 +11,10 @@ import { router } from './routes/index.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-// diretórios corretos considerando server.js dentro de src
 const ROOT_DIR = path.join(__dirname, '..');        // pasta do projeto
-const JS_DIR   = path.join(ROOT_DIR, 'js');         // /js (na raiz)
+const JS_DIR   = path.join(ROOT_DIR, 'js');         // /js
 const CSS_DIR  = path.join(__dirname, 'css');       // /src/css
-const INDEX    = path.join(ROOT_DIR, 'index.html'); // /index.html (na raiz)
+const INDEX    = path.join(ROOT_DIR, 'index.html'); // /index.html
 
 const app = express();
 const PORT = process.env.PORT || 3000;

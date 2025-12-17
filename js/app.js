@@ -54,12 +54,17 @@ const api = {
   del: (p) => request(p, { method: 'DELETE' })
 };
 
-// --------------- DOM refs ---------------
+// --------------- Referencias ao HTML ---------------
+//referente a lista de seleção de UF
 const ufSel = document.getElementById('uf');
+//referente ao campo de inserção de cidade
 const cidadeInp = document.getElementById('cidade');
+//referente ao botão de adicionar
 const btnADD = document.getElementById('btnADD');
+//referencias ao campo de pesquisa e botão de pesquisa
 const pesquisaInp = document.getElementById('pesquisa');
 const btnPesquisar = document.getElementById('btnPesquisar');
+//referente a lista de estados e cidades
 const lista = document.getElementById('lista');
 
 // --------------- Estado local ---------------
@@ -67,6 +72,7 @@ let ESTADOS = [];
 let CIDADES = [];
 
 // --------------- Render ---------------
+//função que cria elementos na lista 
 function renderLista(cidades) {
   lista.innerHTML = '';
   for (const c of cidades) {
