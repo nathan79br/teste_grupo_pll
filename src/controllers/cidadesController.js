@@ -1,8 +1,46 @@
-
+/**
+ * Controller de Cidades.
+ * Responsabilidades:
+ * - Listar cidades com paginação simples
+ * - Obter cidade por ID
+ * - Criar, atualizar e remover cidades
+ *
+ * Códigos de retorno utilizados:
+ * - 200 Sucesso
+ * - 201 Criado
+ * - 204 Sem conteúdo (remoção)
+ * - 400 Requisição inválida (validação)
+ * - 404 Não encontrado
+ * - 409 Conflito (duplicidade)
+ * - 500 Erro interno ao acessar o banco
+ *
+ * @typedef {Object} Cidade
+ * @property {number} id
+ * @property {string} nome
+ * @property {string} estado_uf
+ */
 import { pool } from '../database/connection.js';
 
+/**
+ * Lista cidades com paginação.
+ * Rota: GET /api/cidades
+ * Query params (opcionais):
+ * - page: número da página (>=1, default 1)
+ * - limit: tamanho da página (1..100, default 100)
+ *
+ * Respostas:
+ * - 200: Cidade[] em JSON
+ * - 500: { message: 'Erro ao listar cidades' }
+ *
+ * Observação: retorna apenas os registros da página solicitada
+ * (não retorna total/metadata).
+ *
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 export async function listarCidades(req, res) {
-  // Paginação simples opcional
+  // Paginação simples
   const page = Math.max(1, parseInt(req.query.page || '1', 10));
   const limit = Math.min(100, Math.max(1, parseInt(req.query.limit || '100', 10)));
   const offset = (page - 1) * limit;
@@ -19,6 +57,23 @@ export async function listarCidades(req, res) {
   }
 }
 
+/**
+ * Obtém uma cidade pelo ID.
+ * Rota: GET /api/cidades/:id
+ *
+ * Validações:
+ * - id deve ser inteiro
+ *
+ * Respostas:
+ * - 200: Cidade em JSON
+ * - 400: { message: 'id inválido' }
+ * - 404: { message: 'Cidade não encontrada' }
+ * - 500: { message: 'Erro ao buscar cidade' }
+ *
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 export async function obterCidade(req, res) {
   const id = parseInt(req.params.id, 10);
   if (!Number.isInteger(id)) {
@@ -40,6 +95,29 @@ export async function obterCidade(req, res) {
   }
 }
 
+/**
+ * Cria uma nova cidade.
+ * Rota: POST /api/cidades
+ * Body (JSON):
+ * - nome: string (obrigatório)
+ * - estado_uf: string (UF, ex.: 'SP') (obrigatório)
+ *
+ * Regras:
+ * - Normaliza estado_uf para maiúsculas
+ * - Valida obrigatoriedade dos campos
+ * - Verifica existência da UF na tabela estado
+ * - Trata duplicidade (constraint única, ex.: (nome, estado_uf))
+ *
+ * Respostas:
+ * - 201: { id, nome, estado_uf }
+ * - 400: { message: 'Erro ao criar cidade', detail? }
+ * - 404: { message: 'UF inexistente' }
+ * - 409: { message: 'Cidade já existe nesta UF' }
+ *
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 export async function criarCidade(req, res) {
   let { nome, estado_uf } = req.body || {};
   nome = String(nome || '').trim();
@@ -50,6 +128,7 @@ export async function criarCidade(req, res) {
   }
 
   try {
+    // Garante que a UF existe na tabela estado
     const [[ufExiste]] = await pool.query(
       'SELECT uf FROM estado WHERE uf = ?',
       [estado_uf]
@@ -58,11 +137,13 @@ export async function criarCidade(req, res) {
       return res.status(404).json({ message: 'UF inexistente' });
     }
 
+    // Inserção
     const [r] = await pool.query(
       'INSERT INTO cidade (nome, estado_uf) VALUES (?, ?)',
       [nome, estado_uf]
     );
     res.status(201).json({ id: r.insertId, nome, estado_uf });
+    // Violação de chave única (duplicidade)
   } catch (e) {
     if (e.code === 'ER_DUP_ENTRY') {
       return res.status(409).json({ message: 'Cidade já existe nesta UF' });
@@ -72,6 +153,31 @@ export async function criarCidade(req, res) {
   }
 }
 
+/**
+ * Atualiza uma cidade existente.
+ * Rota: PUT /api/cidades/:id
+ * Params:
+ * - id: number
+ * Body (JSON):
+ * - nome: string (obrigatório)
+ * - estado_uf: string (obrigatório)
+ *
+ * Regras:
+ * - Normaliza estado_uf para maiúsculas
+ * - Valida id e campos obrigatórios
+ * - Verifica existência da UF
+ * - Trata duplicidade
+ *
+ * Respostas:
+ * - 200: { id, nome, estado_uf }
+ * - 400: { message: 'id inválido' | 'nome e estado_uf são obrigatórios' | 'Erro ao atualizar cidade' }
+ * - 404: { message: 'UF inexistente' | 'Cidade não encontrada' }
+ * - 409: { message: 'Cidade já existe nesta UF' }
+ *
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 export async function atualizarCidade(req, res) {
   const id = parseInt(req.params.id, 10);
   let { nome, estado_uf } = req.body || {};
@@ -86,6 +192,7 @@ export async function atualizarCidade(req, res) {
   }
 
   try {
+    // Garante que a UF existe
     const [[ufExiste]] = await pool.query(
       'SELECT uf FROM estado WHERE uf = ?',
       [estado_uf]
@@ -94,6 +201,7 @@ export async function atualizarCidade(req, res) {
       return res.status(404).json({ message: 'UF inexistente' });
     }
 
+    // Atualização
     const [r] = await pool.query(
       'UPDATE cidade SET nome = ?, estado_uf = ? WHERE id = ?',
       [nome, estado_uf, id]
@@ -111,6 +219,23 @@ export async function atualizarCidade(req, res) {
   }
 }
 
+/**
+ * Remove uma cidade por ID.
+ * Rota: DELETE /api/cidades/:id
+ *
+ * Validações:
+ * - id deve ser inteiro
+ *
+ * Respostas:
+ * - 204: sucesso sem corpo
+ * - 400: { message: 'id inválido' }
+ * - 404: { message: 'Cidade não encontrada' }
+ * - 400: { message: 'Erro ao remover cidade', detail? } (erros do driver)
+ *
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 export async function removerCidade(req, res) {
   const id = parseInt(req.params.id, 10);
   if (!Number.isInteger(id)) {
