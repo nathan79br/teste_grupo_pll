@@ -85,7 +85,7 @@ API_TOKEN=TOKEN_FIXO
 
 
 ## 3. Crie o schema e (opcional) popule “estado”
-* Rode os scripts em scripts/sql.
+Rode os scripts em scripts/sql.
 
 ## 4. Suba o servidor
 npm run dev
