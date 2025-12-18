@@ -24,16 +24,10 @@ import { pool } from '../database/connection.js';
 /**
  * Lista cidades com paginação.
  * Rota: GET /api/cidades
- * Query params (opcionais):
- * - page: número da página (>=1, default 1)
- * - limit: tamanho da página (1..100, default 100)
  *
  * Respostas:
  * - 200: Cidade[] em JSON
  * - 500: { message: 'Erro ao listar cidades' }
- *
- * Observação: retorna apenas os registros da página solicitada
- * (não retorna total/metadata).
  *
  * @param {import('express').Request} req
  * @param {import('express').Response} res
@@ -98,9 +92,6 @@ export async function obterCidade(req, res) {
 /**
  * Cria uma nova cidade.
  * Rota: POST /api/cidades
- * Body (JSON):
- * - nome: string (obrigatório)
- * - estado_uf: string (UF, ex.: 'SP') (obrigatório)
  *
  * Regras:
  * - Normaliza estado_uf para maiúsculas
@@ -156,11 +147,6 @@ export async function criarCidade(req, res) {
 /**
  * Atualiza uma cidade existente.
  * Rota: PUT /api/cidades/:id
- * Params:
- * - id: number
- * Body (JSON):
- * - nome: string (obrigatório)
- * - estado_uf: string (obrigatório)
  *
  * Regras:
  * - Normaliza estado_uf para maiúsculas
