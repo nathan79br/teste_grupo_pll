@@ -63,11 +63,14 @@ Regras:
 * MySQL em execução (ou Docker)
 
 ### 1. Clone e instale
+```
 git clone https://github.com/nathan79br/teste_grupo_pll.git
 cd teste_grupo_pll
 npm install
+```
 
-### 2. Configure o .env
+### 2. Configure o .env:
+```
 DB_HOST=127.0.0.1
 DB_USER=root
 DB_PASS=senha
@@ -75,6 +78,7 @@ DB_NAME=teste_pll
 DB_PORT=3306
 PORT=3000
 API_TOKEN=TOKEN_FIXO
+```
 
 ### 3. Crie o schema e (opcional) popule “estado”
 * Rode os scripts em scripts/sql.
