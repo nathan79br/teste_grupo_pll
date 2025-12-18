@@ -1,4 +1,4 @@
-/**
+/*
  * Middleware de autenticação Bearer para a API.
  * Funcionamento:
  * - Lê o cabeçalho Authorization no formato "Bearer <token>".

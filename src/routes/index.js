@@ -6,6 +6,7 @@
  * Endpoints:
  * - GET    /api/estados               → listarEstados
  * - GET    /api/estados/:uf           → obterEstadoPorUf
+ * - GET    /api/estados/:id           → obterEstadoPorID
  * - GET    /api/cidades               → listarCidades   (suporta ?limit=, ?page=, etc. se implementado)
  * - GET    /api/cidades/:id           → obterCidade
  * - POST   /api/cidades               → criarCidade      (body: { nome, estado_uf })
@@ -13,7 +14,7 @@
  * - DELETE /api/cidades/:id           → removerCidade
  */
 import { Router } from 'express';
-import { listarEstados, obterEstadoPorUf } from '../controllers/estadosController.js';
+import { listarEstados, obterEstadoPorUf, obterEstadoPorId} from '../controllers/estadosController.js';
 import { listarCidades, obterCidade, criarCidade, atualizarCidade, removerCidade } from '../controllers/cidadesController.js';
 
 export const router = Router();
@@ -30,6 +31,8 @@ router.get('/estados', listarEstados);
  * GET /api/estados/:uf
  */
 router.get('/estados/:uf', obterEstadoPorUf);
+
+router.get('/estados/id/:id', obterEstadoPorId); //endpoint por ID
 
 // Cidades
 /*

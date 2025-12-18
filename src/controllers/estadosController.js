@@ -71,3 +71,25 @@ export async function obterEstadoPorUf(req, res) {
     res.status(500).json({ message: 'Erro ao buscar estado' });
   }
 }
+
+//Caso a busca por ID for COMPLETAMENTE NECESSÁRIA
+export async function obterEstadoPorId(req, res) {
+  const id = parseInt(req.params.id, 10);
+  if (!Number.isInteger(id) || id <= 0) {
+    return res.status(400).json({ message: 'id inválido' });
+  }
+
+  try {
+    const [rows] = await pool.query(
+      'SELECT id, nome, uf FROM estado WHERE id = ?',
+      [id]
+    );
+    if (!rows.length) {
+      return res.status(404).json({ message: 'Estado não encontrado' });
+    }
+    res.json(rows[0]);
+  } catch (e) {
+    console.error('obterEstadoPorId:', e);
+    res.status(500).json({ message: 'Erro ao buscar estado' });
+  }
+}
