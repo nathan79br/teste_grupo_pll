@@ -3,7 +3,6 @@ API REST para gerir Estados e Cidades do Brasil, com autenticação por token fi
 
 ## Objetivo do Desafio
 ### Validar, de ponta a ponta:
-
 * Lógica de programação
 * Modelagem e uso de banco relacional
 * Construção de APIs REST
@@ -40,9 +39,8 @@ No projeto, o token é lido da variável de ambiente API_TOKEN.
   * DDL e seeds, se você optar por versionar os scripts
 
 ## Banco de Dados
-### Modelagem mínima exigida:
-
-* estado
+Modelagem mínima exigida:
+* Estado
   * id (PK)
   * nome (ex.: “São Paulo”)
   * uf (CHAR(2), único, ex.: “SP”)
@@ -52,17 +50,17 @@ No projeto, o token é lido da variável de ambiente API_TOKEN.
   * nome
   * estado_uf (FK → estado.uf)
 
-Regras:
-* FK válida de cidade.estado_uf para estado.uf
-* uf único
-* Incluir script SQL ou migrations
+* Regras:
+  * FK válida de cidade.estado_uf para estado.uf
+  * uf único
+  * Incluir script SQL ou migrations
 
 # Instalação e Execução
-## Pré-requisitos:
+Pré-requisitos:
 * Node 18+
 * MySQL em execução (ou Docker)
 
-### 1. Clone e instale
+## 1. Clone e instale
 git clone https://github.com/nathan79br/teste_grupo_pll.git
 
 cd teste_grupo_pll
@@ -70,7 +68,7 @@ cd teste_grupo_pll
 npm install
 
 
-### 2. Configure o .env:
+## 2. Configure o .env:
 DB_HOST=127.0.0.1
 
 DB_USER=root
@@ -86,13 +84,13 @@ PORT=3000
 API_TOKEN=TOKEN_FIXO
 
 
-### 3. Crie o schema e (opcional) popule “estado”
+## 3. Crie o schema e (opcional) popule “estado”
 * Rode os scripts em scripts/sql.
 
-### 4. Suba o servidor
+## 4. Suba o servidor
 npm run dev
 
-### 5.Health-check
+## 5.Health-check
 curl -v http://127.0.0.1:3000/health
 
 # Endpoints
@@ -120,7 +118,7 @@ curl -v http://127.0.0.1:3000/health
 
 ## Testes Rápidos (cURL)
 ### Windows PowerShell
-$env:TOKEN = "MEU_TOKEN_FIXO"
+$env:TOKEN = "TOKEN_FIXO"
 
 iwr "http://127.0.0.1:3000/api/estados" -Headers @{Authorization = "Bearer $env:TOKEN"}
 
