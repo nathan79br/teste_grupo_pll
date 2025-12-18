@@ -13,11 +13,6 @@
  * - 404 Não encontrado
  * - 409 Conflito (duplicidade)
  * - 500 Erro interno ao acessar o banco
- *
- * @typedef {Object} Cidade
- * @property {number} id
- * @property {string} nome
- * @property {string} estado_uf
  */
 import { pool } from '../database/connection.js';
 
@@ -28,10 +23,6 @@ import { pool } from '../database/connection.js';
  * Respostas:
  * - 200: Cidade[] em JSON
  * - 500: { message: 'Erro ao listar cidades' }
- *
- * @param {import('express').Request} req
- * @param {import('express').Response} res
- * @returns {Promise<void>}
  */
 export async function listarCidades(req, res) {
   // Paginação simples
@@ -63,10 +54,6 @@ export async function listarCidades(req, res) {
  * - 400: { message: 'id inválido' }
  * - 404: { message: 'Cidade não encontrada' }
  * - 500: { message: 'Erro ao buscar cidade' }
- *
- * @param {import('express').Request} req
- * @param {import('express').Response} res
- * @returns {Promise<void>}
  */
 export async function obterCidade(req, res) {
   const id = parseInt(req.params.id, 10);
@@ -104,10 +91,6 @@ export async function obterCidade(req, res) {
  * - 400: { message: 'Erro ao criar cidade', detail? }
  * - 404: { message: 'UF inexistente' }
  * - 409: { message: 'Cidade já existe nesta UF' }
- *
- * @param {import('express').Request} req
- * @param {import('express').Response} res
- * @returns {Promise<void>}
  */
 export async function criarCidade(req, res) {
   let { nome, estado_uf } = req.body || {};
@@ -159,10 +142,6 @@ export async function criarCidade(req, res) {
  * - 400: { message: 'id inválido' | 'nome e estado_uf são obrigatórios' | 'Erro ao atualizar cidade' }
  * - 404: { message: 'UF inexistente' | 'Cidade não encontrada' }
  * - 409: { message: 'Cidade já existe nesta UF' }
- *
- * @param {import('express').Request} req
- * @param {import('express').Response} res
- * @returns {Promise<void>}
  */
 export async function atualizarCidade(req, res) {
   const id = parseInt(req.params.id, 10);
@@ -217,10 +196,6 @@ export async function atualizarCidade(req, res) {
  * - 400: { message: 'id inválido' }
  * - 404: { message: 'Cidade não encontrada' }
  * - 400: { message: 'Erro ao remover cidade', detail? } (erros do driver)
- *
- * @param {import('express').Request} req
- * @param {import('express').Response} res
- * @returns {Promise<void>}
  */
 export async function removerCidade(req, res) {
   const id = parseInt(req.params.id, 10);

@@ -9,11 +9,6 @@
  * - 400 Requisição inválida (ex.: UF inválida)
  * - 404 Não encontrado
  * - 500 Erro interno ao acessar o banco
- * 
- * @typedef {Object} Estado
- * @property {number} id
- * @property {string} nome
- * @property {string} uf
  */
 import { pool } from '../database/connection.js';
 
@@ -24,10 +19,6 @@ import { pool } from '../database/connection.js';
  * Respostas:
  * - 200: Estado[] em JSON
  * - 500: { message: 'Erro ao listar estados' }
- *
- * @param {import('express').Request} req
- * @param {import('express').Response} res
- * @returns {Promise<void>}
  */
 export async function listarEstados(req, res) {
   try {
@@ -55,10 +46,6 @@ export async function listarEstados(req, res) {
  * - 400: { message: 'UF inválida' }
  * - 404: { message: 'Estado não encontrado' }
  * - 500: { message: 'Erro ao buscar estado' }
- *
- * @param {import('express').Request} req
- * @param {import('express').Response} res
- * @returns {Promise<void>}
  */
 export async function obterEstadoPorUf(req, res) {
   // Normaliza a UF para maiúsculas e valida formato AA

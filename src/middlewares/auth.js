@@ -10,10 +10,6 @@
  * Códigos de retorno:
  * - 401 Token não informado ou inválido.
  * - 500 API_TOKEN não configurado no servidor.
- *
- * @param {import('express').Request} req         //Objeto da requisição
- * @param {import('express').Response} res        //Objeto da resposta
- * @param {import('express').NextFunction} next   //Próximo middleware/handler
  */
 export function auth(req, res, next) {
    // Captura o header "Authorization". Pode vir undefined; por isso o fallback '

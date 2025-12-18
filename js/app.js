@@ -20,47 +20,20 @@ const API_BASE = '/api';
 //Chave usada no localStorage para manter o token da API no ambiente de dev.
 const TOKEN_KEY = 'api_token_dev';
 
-/**
- * Tipo Estado.
- * @typedef {Object} Estado
- * @property {number} id
- * @property {string} nome
- * @property {string} uf
- */
-
-/**
- * Tipo Cidade.
- * @typedef {Object} Cidade
- * @property {number} id
- * @property {string} nome
- * @property {string} estado_uf
- */
-
 //Token (dev) 
-
-/**
- * Obtém o token atual armazenado no navegador.
- * @returns {string} token ou string vazia se inexistente.
- */
-
+// Obtém o token atual armazenado no navegador.
 function getToken() {
   return localStorage.getItem(TOKEN_KEY) || '';
 }
-/**
- * Persiste um token no localStorage.
- * @param {string} t Token Bearer (sem o prefixo "Bearer ").
- */
 
+//Persiste um token no localStorage.
 function setToken(t) {
   localStorage.setItem(TOKEN_KEY, t);
 }
 
-/**
+/*
  * Garante que há um token válido. Se não houver, solicita via prompt.
  * Também pode ser chamado após uma resposta 401 para redefinir o token.
- * @param {Response} [e] Response opcional (ex.: quando status === 401).
- * @returns {Promise<string>} Token em formato limpo (trim).
- * @throws {Error} Se o usuário não informar o token.
  */
 async function ensureToken(e) {
   let t = getToken();
@@ -86,11 +59,6 @@ async function ensureToken(e) {
  * - Demais erros (>=400) → lança Error com message/error do backend ou "HTTP <status>"
  *
  * Observação: quando enviar JSON, serialize o corpo antes (JSON.stringify).
- *
- * @param {string} path Caminho da API_BASE (ex.: "/cidades", "/estados/SP").
- * @param {RequestInit & { __retried?: boolean }} [opts={}] Opções do fetch (method, headers, body, etc.).
- * @returns {Promise<any|null|string>} JSON, string (texto) ou null (quando 204).
- * @throws {Error} Em status não-ok após possível retry em 401.
  */
 async function request(path, opts = {}) {
   const token = getToken();
@@ -120,7 +88,7 @@ async function request(path, opts = {}) {
   return data;
 }
 
-/**
+/*
  * Cliente simplificado para a API com métodos REST.
  * - post/put: serializam automaticamente o corpo para JSON.
  */
@@ -134,7 +102,6 @@ const api = {
   /** @param {string} p */
   del: (p) => request(p, { method: 'DELETE' })
 };
-
 
 //Referencias ao HTML
 //referente a lista de seleção de UF
@@ -150,16 +117,13 @@ const btnPesquisar = document.getElementById('btnPesquisar');
 const lista = document.getElementById('lista');
 
 //Estado local
-/** @type {Estado[]} */
 let ESTADOS = [];
-/** @type {Cidade[]} */
 let CIDADES = [];
 
 //Render
-/**
+/*
  * Renderiza a lista de cidades no <ul id="lista">.
  * Cria elementos: UF, nome, botões Editar/Excluir e associa os handlers.
- * @param {Cidade[]} cidades
  */
 function renderLista(cidades) {
   lista.innerHTML = '';
@@ -209,10 +173,8 @@ function aplicarFiltro() {
 }
 
 //Ações
-/**
- * Carrega estados da API e preenche o <select id="uf">.
- * @returns {Promise<void>}
- */
+//Carrega estados da API e preenche o <select id="uf">.
+
 async function carregarEstados() {
   ESTADOS = await api.get('/estados');
   //preenche a seleção com as opções disponiveis no banco de dados
@@ -225,19 +187,15 @@ async function carregarEstados() {
   }
 }
 
-/**
- * Carrega cidades da API (limit=1000), aplica o filtro e renderiza.
- * @returns {Promise<void>}
- */
+//Carrega cidades da API (limit=1000), aplica o filtro e renderiza.
 async function carregarCidades() {
   CIDADES = await api.get('/cidades?limit=1000');
   aplicarFiltro();
 }
 
-/**
+/*
  * Adiciona uma nova cidade (nome + UF) via API e atualiza a lista.
  * Valida campos e exibe feedbacks via alert.
- * @returns {Promise<void>}
  */
 async function adicionarCidade() {
   const nome = (cidadeInp.value || '').trim();
@@ -256,11 +214,7 @@ async function adicionarCidade() {
   }
 }
 
-/**
- * Edita uma cidade existente solicitando novos valores via prompt.
- * @param {Cidade} c Cidade atual a ser editada.
- * @returns {Promise<void>}
- */
+//Edita uma cidade existente solicitando novos valores via prompt.
 async function editarCidade(c) {
   const novoNome = prompt('Novo nome da cidade:', c.nome);
   if (novoNome === null) return;
@@ -280,11 +234,7 @@ async function editarCidade(c) {
   }
 }
 
-/**
- * Remove uma cidade após confirmação do usuário.
- * @param {number} id ID da cidade.
- * @returns {Promise<void>}
- */
+//Remove uma cidade após confirmação do usuário.
 async function removerCidade(id) {
   if (!confirm('Confirma remover a cidade?')) return;
   try {

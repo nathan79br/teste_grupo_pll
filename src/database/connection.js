@@ -8,7 +8,6 @@
 import 'dotenv/config';
 import { createPool } from 'mysql2/promise';
 
-/** @type {import('mysql2/promise').Pool} */
 export const pool = createPool({
   host: process.env.DB_HOST,      // endereço do servidor MySQL
   user: process.env.DB_USER,      // usuário
@@ -24,9 +23,6 @@ export const pool = createPool({
  * - Obtém uma conexão do pool
  * - Executa `ping()`
  * - Sempre libera a conexão (release), mesmo em erro
- *
- * @returns {Promise<void>}
- * @throws {Error} Propaga erro de conexão se o ping falhar
  */
 export async function testConnection() {
   const conn = await pool.getConnection();
