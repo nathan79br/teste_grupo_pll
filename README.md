@@ -85,7 +85,8 @@ API_TOKEN=TOKEN_FIXO
 
 
 ## 3. Crie o schema e (opcional) popule “estado”
-Rode os scripts em scripts/sql.
+* Rode os scripts em scripts/sql.
+
 ![Schema do Banco de Dados](src/img/SchemaDB.png)
 
 ## 4. Suba o servidor
