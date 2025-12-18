@@ -11,10 +11,10 @@ API REST para gerir Estados e Cidades do Brasil, com autenticação por token fi
 * Entrega: uma API simples com CRUD integrada a um banco relacional, com histórico Git limpo e README claro.
 
 ## Stack
-* Node.js + Express
-* MySQL (pode ser PostgreSQL/MariaDB, mas este projeto usa MySQL)
-* mysql2/promise
-* Dotenv (configuração por variáveis de ambiente)
+* Node.js V.(22.14.0)+ Express V.(4.22.1)
+* MySQL
+* mysql2/promise V.(3.15.3)
+* Dotenv V.(16.6.1)
 * cURL/Postman/Insomnia para testes
 
 ## Autenticação
@@ -58,7 +58,7 @@ Modelagem mínima exigida:
 # Instalação e Execução
 Pré-requisitos:
 * Node 18+
-* MySQL em execução (ou Docker)
+* MySQL em execução
 
 ## 1. Clone e instale
 git clone https://github.com/nathan79br/teste_grupo_pll.git
